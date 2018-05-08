@@ -13,4 +13,10 @@ tempest workspace list
 export EXT_NET=$( openstack network list  |grep test-external |awk '{print $2}')
 discover-tempest-config --deployer-input ~/tempest-deployer-input.conf --debug --create identity.uri $OS_AUTH_URL identity.admin_password $OS_PASSWORD --network-id $EXT_NET
 ostestr '.*smoke'
-
+#Remove the provisioned resources
+export TEST_NET=$(openstack network list |grep test-network |awk '{print $2}')
+export TEST_SUBNET=$(openstack subnet list |grep $TEST_NET |awk '{print $2}')
+for i in $(openstack port list |grep $TEST_SUBNET |awk '{print $2}'); do openstack router remove port test-router $i ; done
+openstack router delete test-router
+openstack network delete test-network
+openstack network delete test-external
