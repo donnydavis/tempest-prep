@@ -10,3 +10,6 @@ sudo yum -y install openstack-tempest python-glance-tests python-keystone-tests 
 tempest init overcloud-test
 cd overcloud-test/
 tempest workspace list
+export EXT_NET=$( openstack network list  |grep test-external |awk '{print $2}')
+discover-tempest-config --deployer-input ~/tempest-deployer-input.conf --debug --create identity.uri $OS_AUTH_URL identity.admin_password $OS_PASSWORD --network-id $EXT_NET
+
